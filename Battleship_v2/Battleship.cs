@@ -12,6 +12,7 @@ namespace Battleship_v2
         {
             this.name = "Battleship";
             this.spaces = 4;
+            this.letter = "B";
         }
         public override void setPosition(int column, int row)
         {

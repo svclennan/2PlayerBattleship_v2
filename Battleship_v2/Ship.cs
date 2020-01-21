@@ -13,6 +13,7 @@ namespace Battleship_v2
         public int colStart;
         public int rowStart;
         public string direction;
+        public string letter;
         public abstract void setPosition(int column, int row);
         public abstract void setDirection(string direction);
     }
