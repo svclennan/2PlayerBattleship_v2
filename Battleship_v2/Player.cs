@@ -6,11 +6,14 @@ using System.Threading.Tasks;
 
 namespace Battleship_v2
 {
-    class Player
+    abstract class Player
     {
         public string name;
         public List<Ship> ships;
         public Board ownBoard;
         public Board targetBoard;
+        abstract public string Attack();
+        abstract public string Defend(string target);
+        abstract public bool CheckDead();
     }
 }

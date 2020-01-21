@@ -9,6 +9,7 @@ namespace Battleship_v2
     class Bot : Player
     {
         Random rand;
+        string previous;
         public Bot(string name)
         {
             this.name = name;
@@ -16,9 +17,22 @@ namespace Battleship_v2
             this.ownBoard = new Board();
             this.targetBoard = new Board();
             rand = new Random();
+            previous = "";
             SetupShipDirection();
             SetupShipPosition();
             SetupBoard();
+        }
+        public override bool CheckDead()
+        {
+            bool output = true;
+            foreach (string value in ownBoard.board)
+            {
+                if (value != " ")
+                {
+                    output = false;
+                }
+            }
+            return output;
         }
         public void SetupShipPosition()
         {
@@ -92,6 +106,34 @@ namespace Battleship_v2
                 }
             }
             ownBoard.print();
+        }
+        public override string Attack()
+        {
+            char part1 = Convert.ToChar(rand.Next(65, 85));
+            int part2 = rand.Next(0, 20);
+            string output = "" + part1 + part2;
+            if (previous.Contains(output))
+            {
+                return Attack();
+            }
+            else
+            {
+                return output;
+            }
+        }
+        public override string Defend(string target)
+        {
+            int column = target[0] - 65;
+            int row = Convert.ToInt32(target.Remove(0, 1));
+            if (ownBoard.board[row, column] != " ")//if input is [15,20], it takes input as [1,520]
+            {
+                ownBoard.board[row, column] = " ";
+                return "hit";
+            }
+            else
+            {
+                return "miss";
+            }
         }
     }
 }

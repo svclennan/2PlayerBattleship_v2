@@ -17,6 +17,18 @@ namespace Battleship_v2
             SetupShips();
             SetupBoard();
         }
+        public override bool CheckDead()
+        {
+            bool output = true;
+            foreach (string value in ownBoard.board)
+            {
+                if (value != " ")
+                {
+                    output = false;
+                }
+            }
+            return output;
+        }
         public void SetupShips()
         {
             foreach (Ship ship in ships)
@@ -189,6 +201,31 @@ namespace Battleship_v2
                 }
             }
             return false;
+        }
+        public override string Attack()
+        {
+            Console.WriteLine("Your previous attacks:");
+            targetBoard.print();
+            Console.WriteLine("Choose a location to attack.(NumberLetter)");
+            string target = Console.ReadLine().ToUpper();
+            char column = target[0];
+            int columnIndex = column - 65;
+            int row = TryConvert(target.Remove(0, 1));
+            return "" + column + row;
+        }
+        public override string Defend(string target)
+        {
+            int column = target[0]-65;
+            int row = Convert.ToInt32(target.Remove(0, 1));
+            if (ownBoard.board[row, column] != " ")
+            {
+                ownBoard.board[row, column] = " ";
+                return "hit";
+            }
+            else
+            {
+                return "miss";
+            }
         }
     }
 }
