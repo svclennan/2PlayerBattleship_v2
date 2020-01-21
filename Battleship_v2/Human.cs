@@ -123,6 +123,7 @@ namespace Battleship_v2
                             }
                     }
                 }
+                ownBoard.print();
             }
             ownBoard.print();
         }
@@ -133,9 +134,10 @@ namespace Battleship_v2
             {
                 for (int i = 0; i < ship.spaces; i++)
                 {
-                    if (ownBoard.board[ship.colStart, ship.rowStart] != " ")
+                    if (ownBoard.board[ship.rowStart, ship.colStart + i] != " ")
                     {
                         output = false;
+                        break;
                     }
                 }
             }
@@ -143,9 +145,10 @@ namespace Battleship_v2
             {
                 for (int i = 0; i < ship.spaces; i++)
                 {
-                    if (ownBoard.board[ship.colStart+i, ship.rowStart] != " ")
+                    if (ownBoard.board[ship.rowStart+i, ship.colStart] != " ")
                     {
                         output = false;
+                        break;
                     }
                 }
             }
