@@ -10,8 +10,9 @@ namespace Battleship_v2
     {
         static void Main(string[] args)
         {
-            Board board = new Board();
-            board.print();
+            Game game = new Game();
+            //Board board = new Board();
+            //board.print();
             Console.ReadLine();
         }
     }

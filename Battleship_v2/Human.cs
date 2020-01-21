@@ -14,7 +14,21 @@ namespace Battleship_v2
             this.ships = new List<Ship>() { new Carrier(), new Battleship(), new Submarine(), new Destroyer()};
             this.ownBoard = new Board();
             this.targetBoard = new Board();
-            SetupShipPosition();
+            SetupShips();
+            SetupBoard();
+        }
+        public void SetupShips()
+        {
+            foreach (Ship ship in ships)
+            {
+                ChoosePosition(ship);
+                ChooseDirection(ship);
+                while (!ValidInput(ship.colStart, ship.rowStart, ship))
+                {
+                    ChoosePosition(ship);
+                    ChooseDirection(ship);
+                }
+            }
         }
         public void SetupShipPosition()
         {
@@ -25,24 +39,18 @@ namespace Battleship_v2
         }
         public void ChoosePosition(Ship ship)
         {
-            bool valid = false;
-            while (!valid)
+            Console.WriteLine($"{name}, where would you like to place your {ship.name}?(Format: LetterNumber)");
+            string placement = Console.ReadLine().ToUpper();
+            char column = placement[0];
+            int columnIndex = column - 65;
+            int row = TryConvert(placement.Remove(0, 1));
+            if (columnIndex >= 0)
             {
-                Console.WriteLine($"{name}, where would you like to place your {ship.name}?(Format: LetterNumber)");
-                string placement = Console.ReadLine().ToUpper();
-                char column = placement[0];
-                int columnIndex = column - 65;
-                int row = TryConvert(placement.Remove(0, 1));
-                if (ValidInput(columnIndex, row))
-                {
-                    ship.setPosition(columnIndex, row);
-                    valid = true;
-                }
-                else
-                {
-                    Console.WriteLine("Your input was invalid. Try again.");
-                    valid = false;
-                }
+                ship.setPosition(columnIndex, row - 1);
+            }
+            else
+            {
+                ChoosePosition(ship);
             }
         }
         public void SetupShipDirection()
@@ -85,16 +93,22 @@ namespace Battleship_v2
         {
             foreach (Ship ship in ships)
             {
-                while (ship.spaces > 0)
+                int tiles = ship.spaces;
+                while(!OpenWater(ship))
                 {
-                    while (ownBoard.board[ship.rowStart, ship.colStart] != " ")
+                    Console.WriteLine($"{ship.name} collides.");
+                    ChoosePosition(ship);
+                    ChooseDirection(ship);
+                    while (!ValidInput(ship.colStart, ship.rowStart, ship))
                     {
-                        Console.WriteLine($"{ship.name} collides with another ship. Re-place it.");
                         ChoosePosition(ship);
                         ChooseDirection(ship);
                     }
+                }
+                while (tiles > 0)
+                {
                     ownBoard.board[ship.rowStart, ship.colStart] = ship.letter;
-                    ship.spaces--;
+                    tiles--;
                     switch (ship.direction)
                     {
                         case ("DOWN"):
@@ -112,6 +126,31 @@ namespace Battleship_v2
             }
             ownBoard.print();
         }
+        public bool OpenWater(Ship ship)
+        {
+            bool output = true;
+            if (ship.direction == "RIGHT")
+            {
+                for (int i = 0; i < ship.spaces; i++)
+                {
+                    if (ownBoard.board[ship.colStart, ship.rowStart] != " ")
+                    {
+                        output = false;
+                    }
+                }
+            }
+            if(ship.direction == "DOWN")
+            {
+                for (int i = 0; i < ship.spaces; i++)
+                {
+                    if (ownBoard.board[ship.colStart+i, ship.rowStart] != " ")
+                    {
+                        output = false;
+                    }
+                }
+            }
+            return output;
+        }
         public int TryConvert(string number)
         {
             try
@@ -124,13 +163,26 @@ namespace Battleship_v2
                 return TryConvert(Console.ReadLine());
             }
         }
-        public bool ValidInput(int col, int row)
+        public bool ValidInput(int col, int row, Ship ship)
         {
-            if (col > -1 && col < 21)
+            if (ship.direction == "RIGHT")
             {
-                if (row > -1 && row < 21)
+                if (col > -1 && col < 21-ship.spaces)
                 {
-                    return true;
+                    if (row > -1 && row < 21)
+                    {
+                        return true;
+                    }
+                }
+            }
+            if (ship.direction == "DOWN")
+            {
+                if (col > -1 && col < 21)
+                {
+                    if (row > -1 && row < 21 - ship.spaces)
+                    {
+                        return true;
+                    }
                 }
             }
             return false;
